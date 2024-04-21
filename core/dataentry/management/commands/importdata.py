@@ -4,7 +4,7 @@ from django.apps import apps
 import csv
 
 
-# Proposed command - python manage.py importdata file_path model_name
+# Proposed command : python manage.py importdata file_path model_name
 class Command(BaseCommand):
     help = 'Import data from CSV file'
     
