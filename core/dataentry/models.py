@@ -8,3 +8,11 @@ class Student(models.Model):
     
     def ___str__(self):
         return self.name
+    
+    
+class Customer(models.Model):
+    customer_name = models.CharField(max_length=10)
+    country = models.CharField(max_length=20)
+    
+    def ___str__(self):
+        return self.customer_name
