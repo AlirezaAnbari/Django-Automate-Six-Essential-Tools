@@ -23,7 +23,7 @@ class Command(BaseCommand):
             try:
                 model = apps.get_model(app_config.label, model_name)
                 break                  # stop searching once the model is found
-            except LookupError as e:
+            except LookupError:
                 continue               # model not found in this app, continue searching in next app
             
         if not model:
