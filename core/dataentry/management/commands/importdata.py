@@ -1,5 +1,6 @@
 from django.core.management import BaseCommand, CommandError
 from django.apps import apps
+from django.db.utils import DataError
 
 import csv
 
@@ -22,17 +23,24 @@ class Command(BaseCommand):
         for app_config in apps.get_app_configs():
             try:
                 model = apps.get_model(app_config.label, model_name)
-                break                  # stop searching once the model is found
+                break # stop searching once the model is found
             except LookupError:
-                continue               # model not found in this app, continue searching in next app
+                continue # model not found in this app, continue searching in next app
             
         if not model:
             raise CommandError(f'Model {model_name} not found in any apps!')
             
-            
+        # Get all the fields name of the model that we found
+        model_fields = [field.name for field in model._meta.fields if field.name != 'id']
+        
         with open(file_path, 'r') as file:
             reader = csv.DictReader(file)      # return DictReader object -> dict
-            # reader2 = csv.reader(file)       # return reader object -> list
+            csv_header = reader.fieldnames
+            
+            # Compare CSV header with model's field names
+            if csv_header != model_fields:
+                raise DataError(f'CSV file does not match with the {model_name} field names.')
+            
             for record in reader:
                 model.objects.create(**record)
         
